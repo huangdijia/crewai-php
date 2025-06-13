@@ -13,7 +13,7 @@ abstract class BaseTask implements TaskInterface
     protected ?AgentInterface $agent;
     protected ?array $outputJson;
     protected ?string $outputPydantic;
-    protected callable|null $callback;
+    protected mixed $callback;
     protected ?bool $humanInput;
     protected array $context;
     protected array $tools;
@@ -42,7 +42,7 @@ abstract class BaseTask implements TaskInterface
         ?object $agentExecutor = null,
         ?string $outputFormat = null,
         ?string $promptTemplate = null,
-           callable|null $callback = null,,
+        mixed $stepCallback = null,
         array $config = []
     )
     {

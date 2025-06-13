@@ -5,11 +5,13 @@ parameters:
         - tests
     excludePaths:
         - vendor
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
         - '#Call to an undefined method#'
         - '#Access to an undefined property#'
+        -
+            identifier: missingType.iterableValue
+        -
+            identifier: missingType.generics
     parallel:
         jobSize: 20
         maximumNumberOfProcesses: 32
