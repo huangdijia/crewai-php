@@ -59,28 +59,28 @@ class AgentExecutor
 
     public function execute(): string
     {
-        $this->logger->info("Starting agent execution", [
+        $this->logger->info('Starting agent execution', [
             'agent' => $this->agent->getName(),
             'task' => $this->task->getDescription(),
             'tools' => array_keys($this->tools),
-            'verbose' => $this->verbose
+            'verbose' => $this->verbose,
         ]);
 
         try {
             $formattedAnswer = $this->invokeLoop();
         } catch (\Exception $e) {
-            $this->logger->error("Agent execution failed", [
+            $this->logger->error('Agent execution failed', [
                 'error' => $e->getMessage(),
-                'agent' => $this->agent->getName()
+                'agent' => $this->agent->getName(),
             ]);
             AgentUtils::handleUnknownError($this->printer, $e);
 
             throw $e;
         }
 
-        $this->logger->info("Agent execution completed successfully", [
+        $this->logger->info('Agent execution completed successfully', [
             'agent' => $this->agent->getName(),
-            'output_length' => strlen($formattedAnswer->output)
+            'output_length' => strlen($formattedAnswer->output),
         ]);
 
         // TODO: Implement human feedback and memory creation
@@ -99,12 +99,12 @@ class AgentExecutor
         while (true) {
             if (AgentUtils::hasReachedMaxIterations($this->iterations, $this->maxIterations)) {
                 if ($this->verbose) {
-                    $this->logger->warning("Max iterations reached", [
+                    $this->logger->warning('Max iterations reached', [
                         'iterations' => $this->iterations,
-                        'max_iterations' => $this->maxIterations
+                        'max_iterations' => $this->maxIterations,
                     ]);
                 }
-                
+
                 return AgentUtils::handleMaxIterationsExceeded(
                     null,
                     $this->printer,
@@ -116,40 +116,41 @@ class AgentExecutor
 
             try {
                 if ($this->verbose) {
-                    $this->logger->debug("Calling LLM", ['iteration' => $this->iterations]);
+                    $this->logger->debug('Calling LLM', ['iteration' => $this->iterations]);
                 }
-                
+
                 $llmResponse = $this->llm->call($this->messages);
                 $formattedAnswer = AgentUtils::processLLMResponse($llmResponse, $this->llm->getStopWords());
 
                 if ($formattedAnswer instanceof AgentAction) {
                     if ($this->verbose) {
-                        $this->logger->debug("Executing tool", [
+                        $this->logger->debug('Executing tool', [
                             'tool' => $formattedAnswer->tool,
-                            'input' => $formattedAnswer->toolInput
+                            'input' => $formattedAnswer->toolInput,
                         ]);
                     }
-                    
+
                     $toolResult = $this->toolsHandler->executeTool(
                         $formattedAnswer->tool,
                         $formattedAnswer->toolInput
                     );
                     $this->handleAgentAction($formattedAnswer, $toolResult);
                     $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->log, 'assistant');
-                    // Continue the loop to get the next response
+                // Continue the loop to get the next response
                 } else {
                     // $formattedAnswer is AgentFinish
                     if ($this->verbose) {
-                        $this->logger->info("Agent finished", ['output' => $formattedAnswer->output]);
+                        $this->logger->info('Agent finished', ['output' => $formattedAnswer->output]);
                     }
                     $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->output, 'assistant');
+
                     return $formattedAnswer;
                 }
             } catch (OutputParserException $e) {
                 if ($this->verbose) {
-                    $this->logger->warning("Output parser exception", ['error' => $e->getMessage()]);
+                    $this->logger->warning('Output parser exception', ['error' => $e->getMessage()]);
                 }
-                
+
                 return AgentUtils::handleOutputParserException(
                     $e,
                     $this->messages,

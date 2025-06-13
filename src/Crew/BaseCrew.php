@@ -1,13 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CrewAI\PHP\Crew;
 
-use CrewAI\PHP\Core\Interfaces\AgentInterface;
 use CrewAI\PHP\Core\Interfaces\CrewInterface;
 use CrewAI\PHP\Core\Interfaces\LLMInterface;
 use CrewAI\PHP\Core\Interfaces\StepCallbackInterface;
-use CrewAI\PHP\Core\Interfaces\TaskInterface;
 
 abstract class BaseCrew implements CrewInterface
 {
@@ -29,8 +28,7 @@ abstract class BaseCrew implements CrewInterface
         ?StepCallbackInterface $stepCallback = null,
         bool $shareCrew = false,
         ?LLMInterface $managerLLM = null
-    )
-    {
+    ) {
         $this->agents = $agents;
         $this->tasks = $tasks;
         $this->process = $process;
@@ -83,5 +81,3 @@ abstract class BaseCrew implements CrewInterface
 
     abstract public function kickoff(): string;
 }
-
-

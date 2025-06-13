@@ -53,15 +53,15 @@ class Logger implements LoggerInterface
 
     public function log($level, string|\Stringable $message, array $context = []): void
     {
-        if (!$this->enabled) {
+        if (! $this->enabled) {
             return;
         }
 
         $timestamp = date('Y-m-d H:i:s');
         $formattedMessage = sprintf('[%s] %s: %s', $timestamp, strtoupper($level), $message);
-        
-        if (!empty($context)) {
-            $formattedMessage .= ' ' . json_encode($context);
+
+        if (! empty($context)) {
+            $formattedMessage .= ' '.json_encode($context);
         }
 
         error_log($formattedMessage);

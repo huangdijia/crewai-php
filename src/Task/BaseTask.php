@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace CrewAI\PHP\Task;
@@ -44,8 +45,7 @@ abstract class BaseTask implements TaskInterface
         ?string $promptTemplate = null,
         mixed $stepCallback = null,
         array $config = []
-    )
-    {
+    ) {
         $this->description = $description;
         $this->expectedOutput = $expectedOutput;
         $this->agent = $agent;
@@ -90,7 +90,7 @@ abstract class BaseTask implements TaskInterface
         return $this->outputPydantic;
     }
 
-    public function getCallback(): \Closure|null
+    public function getCallback(): ?\Closure
     {
         return $this->callback;
     }
@@ -140,7 +140,7 @@ abstract class BaseTask implements TaskInterface
         return $this->promptTemplate;
     }
 
-    public function getStepCallback(): \Closure|null
+    public function getStepCallback(): ?\Closure
     {
         return $this->stepCallback;
     }
@@ -150,5 +150,3 @@ abstract class BaseTask implements TaskInterface
         return $this->config;
     }
 }
-
-

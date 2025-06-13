@@ -8,7 +8,6 @@ use CrewAI\PHP\Agent\Parser\AgentAction;
 use CrewAI\PHP\Agent\Parser\AgentFinish;
 use CrewAI\PHP\Agent\Parser\OutputParserException;
 use CrewAI\PHP\Core\Interfaces\LLMInterface;
-use Exception;
 
 class AgentUtils
 {
@@ -82,7 +81,7 @@ class AgentUtils
         return new AgentFinish('Error parsing LLM output.', '');
     }
 
-    public static function handleUnknownError(Printer $printer, Exception $e): void
+    public static function handleUnknownError(Printer $printer, \Exception $e): void
     {
         $printer->print(
             content: 'An unknown error occurred: '.$e->getMessage(),
