@@ -28,7 +28,7 @@ A PHP implementation of the CrewAI framework for building and orchestrating AI a
 Install via Composer:
 
 ```bash
-composer require crewai/php
+composer require huangdijia/crewai-php
 ```
 
 ## Quick Start

@@ -1,6 +1,6 @@
 
 {
-    "name": "crewai/php",
+    "name": "huangdijia/crewai-php",
     "description": "PHP implementation of the CrewAI framework.",
     "type": "library",
     "license": "MIT",

@@ -28,7 +28,7 @@ CrewAI 框架的 PHP 实现，用于构建和编排 AI 智能体团队。CrewAI 
 通过 Composer 安装：
 
 ```bash
-composer require crewai/php
+composer require huangdijia/crewai-php
 ```
 
 ## 快速开始
