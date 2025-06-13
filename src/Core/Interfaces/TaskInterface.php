@@ -16,7 +16,7 @@ interface TaskInterface
 
     public function getOutputPydantic(): ?string;
 
-    public function getCallback(): ?callable;
+    public function getCallback(): ?\Closure;
 
     public function getHumanInput(): ?bool;
 
@@ -36,7 +36,7 @@ interface TaskInterface
 
     public function getPromptTemplate(): ?string;
 
-    public function getStepCallback(): ?callable;
+    public function getStepCallback(): ?\Closure;
 
     public function getConfig(): array;
 }
