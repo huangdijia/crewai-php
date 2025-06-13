@@ -96,8 +96,7 @@ class AgentExecutor
 
     private function invokeLoop(): AgentFinish
     {
-        $formattedAnswer = null;
-        while (! ($formattedAnswer instanceof AgentFinish)) {
+        while (true) {
             if (AgentUtils::hasReachedMaxIterations($this->iterations, $this->maxIterations)) {
                 if ($this->verbose) {
                     $this->logger->warning("Max iterations reached", [
@@ -106,15 +105,13 @@ class AgentExecutor
                     ]);
                 }
                 
-                $formattedAnswer = AgentUtils::handleMaxIterationsExceeded(
-                    $formattedAnswer,
+                return AgentUtils::handleMaxIterationsExceeded(
+                    null,
                     $this->printer,
                     $this->i18n,
                     $this->messages,
                     $this->llm
                 );
-
-                break;
             }
 
             try {
@@ -137,20 +134,23 @@ class AgentExecutor
                         $formattedAnswer->tool,
                         $formattedAnswer->toolInput
                     );
-                    $formattedAnswer = $this->handleAgentAction($formattedAnswer, $toolResult);
+                    $this->handleAgentAction($formattedAnswer, $toolResult);
                     $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->log, 'assistant');
-                } elseif ($formattedAnswer instanceof AgentFinish) {
+                    // Continue the loop to get the next response
+                } else {
+                    // $formattedAnswer is AgentFinish
                     if ($this->verbose) {
                         $this->logger->info("Agent finished", ['output' => $formattedAnswer->output]);
                     }
                     $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->output, 'assistant');
+                    return $formattedAnswer;
                 }
             } catch (OutputParserException $e) {
                 if ($this->verbose) {
                     $this->logger->warning("Output parser exception", ['error' => $e->getMessage()]);
                 }
                 
-                $formattedAnswer = AgentUtils::handleOutputParserException(
+                return AgentUtils::handleOutputParserException(
                     $e,
                     $this->messages,
                     $this->iterations,
@@ -176,8 +176,6 @@ class AgentExecutor
             }
             ++$this->iterations;
         }
-
-        return $formattedAnswer;
     }
 
     private function handleAgentAction(AgentAction $action, string $toolResult): AgentAction

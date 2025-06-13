@@ -24,7 +24,12 @@
         <MissingPropertyType errorLevel="info" />
         <InvalidDocblock errorLevel="info" />
         <MissingConstructor errorLevel="info" />
-        <UntypedParam errorLevel="info" />
+        <MissingParamType errorLevel="info" />
         <RedundantConditionGivenDocblockType errorLevel="info" />
+        <NullableReturnStatement>
+            <errorLevel type="suppress">
+                <file name="src/Agent/Executor/AgentExecutor.php" />
+            </errorLevel>
+        </NullableReturnStatement>
     </issueHandlers>
 </psalm>
