@@ -26,7 +26,7 @@ class ToolsHandler
     public function executeTool(string $toolName, string $toolInput): string
     {
         if (! isset($this->tools[$toolName])) {
-            throw new CrewAIException(sprintf('Tool ', $toolName, ' not found.'));
+            throw new CrewAIException(sprintf('Tool %s not found.', $toolName));
         }
 
         $tool = $this->tools[$toolName];

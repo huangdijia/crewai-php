@@ -41,6 +41,11 @@ abstract class BaseAgent implements AgentInterface
         return $this->role;
     }
 
+    public function getName(): string
+    {
+        return $this->role; // Use role as name for now
+    }
+
     public function getGoal(): string
     {
         return $this->goal;

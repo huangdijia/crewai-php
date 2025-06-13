@@ -8,6 +8,8 @@ interface AgentInterface
 {
     public function executeTask(TaskInterface $task): string;
 
+    public function getName(): string;
+
     public function getRole(): string;
 
     public function getGoal(): string;

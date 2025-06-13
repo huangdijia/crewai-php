@@ -7,6 +7,7 @@ namespace CrewAI\PHP\Crew;
 use CrewAI\PHP\Core\Exceptions\CrewAIException;
 use CrewAI\PHP\Core\Interfaces\AgentInterface;
 use CrewAI\PHP\Core\Interfaces\LLMInterface;
+use CrewAI\PHP\Core\Interfaces\StepCallbackInterface;
 use CrewAI\PHP\Core\Interfaces\TaskInterface;
 
 class Crew extends BaseCrew
@@ -17,7 +18,7 @@ class Crew extends BaseCrew
         string $process = 'sequential',
         bool $verbose = false,
         bool $fullOutput = false,
-        ?callable $stepCallback = null,
+        ?StepCallbackInterface $stepCallback = null,
         bool $shareCrew = false,
         ?LLMInterface $managerLLM = null
     ) {
@@ -70,7 +71,7 @@ class Crew extends BaseCrew
                     $output[] = $taskResult;
 
                     if ($this->stepCallback) {
-                        ($this->stepCallback)($taskResult);
+                        ($this->stepCallback)(['result' => $taskResult, 'task' => $task->getDescription()]);
                     }
                 }
 

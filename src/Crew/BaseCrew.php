@@ -6,6 +6,7 @@ namespace CrewAI\PHP\Crew;
 use CrewAI\PHP\Core\Interfaces\AgentInterface;
 use CrewAI\PHP\Core\Interfaces\CrewInterface;
 use CrewAI\PHP\Core\Interfaces\LLMInterface;
+use CrewAI\PHP\Core\Interfaces\StepCallbackInterface;
 use CrewAI\PHP\Core\Interfaces\TaskInterface;
 
 abstract class BaseCrew implements CrewInterface
@@ -15,7 +16,7 @@ abstract class BaseCrew implements CrewInterface
     protected string $process;
     protected bool $verbose;
     protected bool $fullOutput;
-    protected ?callable $stepCallback;
+    protected ?StepCallbackInterface $stepCallback;
     protected bool $shareCrew;
     protected ?LLMInterface $managerLLM;
 
@@ -25,7 +26,7 @@ abstract class BaseCrew implements CrewInterface
         string $process = 'sequential',
         bool $verbose = false,
         bool $fullOutput = false,
-        ?callable $stepCallback = null,
+        ?StepCallbackInterface $stepCallback = null,
         bool $shareCrew = false,
         ?LLMInterface $managerLLM = null
     )

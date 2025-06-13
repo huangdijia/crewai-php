@@ -59,13 +59,29 @@ class AgentExecutor
 
     public function execute(): string
     {
+        $this->logger->info("Starting agent execution", [
+            'agent' => $this->agent->getName(),
+            'task' => $this->task->getDescription(),
+            'tools' => array_keys($this->tools),
+            'verbose' => $this->verbose
+        ]);
+
         try {
             $formattedAnswer = $this->invokeLoop();
         } catch (\Exception $e) {
+            $this->logger->error("Agent execution failed", [
+                'error' => $e->getMessage(),
+                'agent' => $this->agent->getName()
+            ]);
             AgentUtils::handleUnknownError($this->printer, $e);
 
             throw $e;
         }
+
+        $this->logger->info("Agent execution completed successfully", [
+            'agent' => $this->agent->getName(),
+            'output_length' => strlen($formattedAnswer->output)
+        ]);
 
         // TODO: Implement human feedback and memory creation
         // if ($this->task->getHumanInput()) {
@@ -83,6 +99,13 @@ class AgentExecutor
         $formattedAnswer = null;
         while (! ($formattedAnswer instanceof AgentFinish)) {
             if (AgentUtils::hasReachedMaxIterations($this->iterations, $this->maxIterations)) {
+                if ($this->verbose) {
+                    $this->logger->warning("Max iterations reached", [
+                        'iterations' => $this->iterations,
+                        'max_iterations' => $this->maxIterations
+                    ]);
+                }
+                
                 $formattedAnswer = AgentUtils::handleMaxIterationsExceeded(
                     $formattedAnswer,
                     $this->printer,
@@ -95,20 +118,38 @@ class AgentExecutor
             }
 
             try {
+                if ($this->verbose) {
+                    $this->logger->debug("Calling LLM", ['iteration' => $this->iterations]);
+                }
+                
                 $llmResponse = $this->llm->call($this->messages);
                 $formattedAnswer = AgentUtils::processLLMResponse($llmResponse, $this->llm->getStopWords());
 
                 if ($formattedAnswer instanceof AgentAction) {
+                    if ($this->verbose) {
+                        $this->logger->debug("Executing tool", [
+                            'tool' => $formattedAnswer->tool,
+                            'input' => $formattedAnswer->toolInput
+                        ]);
+                    }
+                    
                     $toolResult = $this->toolsHandler->executeTool(
                         $formattedAnswer->tool,
                         $formattedAnswer->toolInput
                     );
                     $formattedAnswer = $this->handleAgentAction($formattedAnswer, $toolResult);
-                    $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->text, 'assistant');
+                    $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->log, 'assistant');
                 } elseif ($formattedAnswer instanceof AgentFinish) {
+                    if ($this->verbose) {
+                        $this->logger->info("Agent finished", ['output' => $formattedAnswer->output]);
+                    }
                     $this->messages[] = AgentUtils::formatMessageForLLM($formattedAnswer->output, 'assistant');
                 }
             } catch (OutputParserException $e) {
+                if ($this->verbose) {
+                    $this->logger->warning("Output parser exception", ['error' => $e->getMessage()]);
+                }
+                
                 $formattedAnswer = AgentUtils::handleOutputParserException(
                     $e,
                     $this->messages,
@@ -139,7 +180,7 @@ class AgentExecutor
         return $formattedAnswer;
     }
 
-    private function handleAgentAction(AgentAction $action, string $toolResult): AgentFinish|AgentAction
+    private function handleAgentAction(AgentAction $action, string $toolResult): AgentAction
     {
         // This is a simplified version. In the original, it also handles add_image_tool
         // and other complex logic. For now, we just append the tool result.

@@ -26,7 +26,7 @@ class AgentUtils
     }
 
     public static function handleMaxIterationsExceeded(
-        $formattedAnswer,
+        mixed $formattedAnswer,
         Printer $printer,
         I18N $i18n,
         array $messages,
