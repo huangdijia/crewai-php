@@ -12,7 +12,9 @@ CrewAI 框架的 PHP 实现，用于构建和编排 AI 智能体团队。CrewAI 
 - 🔧 **工具集成**: 为智能体配备特定任务的自定义工具
 - 📋 **任务管理**: 定义具有任务依赖关系的复杂工作流
 - 🎭 **角色扮演**: 智能体具有明确的角色、目标和背景故事
-- 🔄 **流程编排**: 顺序和层次化任务执行
+- 🔄 **流程编排**: 顺序、并行和层次化任务执行
+- 🔀 **流程组合**: 将多个 Crew 组合成更高级的流程
+- 📚 **知识库**: 简单的内存级事实存储与检索
 - 📊 **内存管理**: 短期、长期和上下文内存
 - 🎯 **任务委派**: 智能体可以将任务委派给其他专业智能体
 - 📝 **全面日志**: 内置日志记录和监控功能
@@ -180,7 +182,7 @@ class DatabaseTool extends BaseTool
 $crew = new Crew(
     agents: [$agent1, $agent2],
     tasks: [$task1, $task2],
-    process: 'sequential', // 或 'hierarchical'
+    process: 'sequential', // 'parallel' 或 'hierarchical'
     verbose: true,
     stepCallback: $stepCallback // 可选的监控回调
 );
@@ -294,6 +296,8 @@ composer check
 查看 `examples/` 目录获取更多综合示例：
 
 - `simple_crew.php` - 基本团队设置和执行
+- `parallel_crew.php` - 展示并行任务执行
+- `flow.php` - 演示如何将多个 Crew 组合成流程并使用知识库
 - 更多示例即将推出！
 
 ## 路线图

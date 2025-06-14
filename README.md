@@ -12,7 +12,9 @@ A PHP implementation of the CrewAI framework for building and orchestrating AI a
 - 🔧 **Tool Integration**: Equip agents with custom tools for specific tasks
 - 📋 **Task Management**: Define complex workflows with task dependencies
 - 🎭 **Role-Playing**: Agents have defined roles, goals, and backstories
-- 🔄 **Process Orchestration**: Sequential and hierarchical task execution
+- 🔄 **Process Orchestration**: Sequential, parallel, and hierarchical task execution
+- 🔀 **Flow Composition**: Combine multiple crews into higher-level flows
+- 📚 **Knowledge Base**: Simple in-memory storage and retrieval for facts
 - 📊 **Memory Management**: Short-term, long-term, and contextual memory
 - 🎯 **Delegation**: Agents can delegate tasks to other specialized agents
 - 📝 **Comprehensive Logging**: Built-in logging and monitoring capabilities
@@ -180,7 +182,7 @@ Crews orchestrate multiple agents and tasks:
 $crew = new Crew(
     agents: [$agent1, $agent2],
     tasks: [$task1, $task2],
-    process: 'sequential', // or 'hierarchical'
+    process: 'sequential', // 'parallel' or 'hierarchical'
     verbose: true,
     stepCallback: $stepCallback // Optional callback for monitoring
 );
@@ -294,6 +296,8 @@ composer check
 Check out the `examples/` directory for more comprehensive examples:
 
 - `simple_crew.php` - Basic crew setup and execution
+- `parallel_crew.php` - Demonstrates parallel task execution
+- `flow.php` - Shows how to compose crews into a flow with a knowledge base
 - More examples coming soon!
 
 ## Roadmap

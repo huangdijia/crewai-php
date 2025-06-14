@@ -9,6 +9,7 @@ use CrewAI\PHP\Core\Interfaces\AgentInterface;
 use CrewAI\PHP\Core\Interfaces\LLMInterface;
 use CrewAI\PHP\Core\Interfaces\StepCallbackInterface;
 use CrewAI\PHP\Core\Interfaces\TaskInterface;
+use Swoole\Coroutine\WaitGroup;
 
 class Crew extends BaseCrew
 {
@@ -74,6 +75,46 @@ class Crew extends BaseCrew
                         ($this->stepCallback)(['result' => $taskResult, 'task' => $task->getDescription()]);
                     }
                 }
+
+                break;
+            case 'parallel':
+                \Swoole\Coroutine\run(function () use (&$output) {
+                    $wg = new \Swoole\Coroutine\WaitGroup();
+
+                    foreach ($this->tasks as $task) {
+                        if (! $task instanceof TaskInterface) {
+                            throw new CrewAIException('Invalid task provided. Must implement TaskInterface.');
+                        }
+
+                        $assignedAgent = $task->getAgent();
+                        if (null === $assignedAgent) {
+                            $assignedAgent = $this->agents[0];
+                        }
+
+                        if (! $assignedAgent instanceof AgentInterface) {
+                            throw new CrewAIException('Invalid agent assigned to task. Must implement AgentInterface.');
+                        }
+
+                        $wg->add();
+
+                        \Swoole\Coroutine\go(function () use ($task, $assignedAgent, $wg, &$output) {
+                            if ($this->verbose) {
+                                echo "\nExecuting Task: ".$task->getDescription().' with Agent: '.$assignedAgent->getRole()."\n";
+                            }
+
+                            $taskResult = $assignedAgent->executeTask($task);
+                            $output[] = $taskResult;
+
+                            if ($this->stepCallback) {
+                                ($this->stepCallback)(['result' => $taskResult, 'task' => $task->getDescription()]);
+                            }
+
+                            $wg->done();
+                        });
+                    }
+
+                    $wg->wait();
+                });
 
                 break;
             case 'hierarchical':
