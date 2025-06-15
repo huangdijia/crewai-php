@@ -79,7 +79,7 @@ class Crew extends BaseCrew
                 break;
             case 'parallel':
                 \Swoole\Coroutine\run(function () use (&$output) {
-                    $wg = new \Swoole\Coroutine\WaitGroup();
+                    $wg = new WaitGroup();
 
                     foreach ($this->tasks as $task) {
                         if (! $task instanceof TaskInterface) {

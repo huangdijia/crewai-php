@@ -29,7 +29,7 @@ class KnowledgeBase implements KnowledgeInterface
     {
         $results = [];
         foreach ($this->documents as $id => $content) {
-            if (stripos($content, $keyword) !== false) {
+            if (false !== stripos($content, $keyword)) {
                 $results[$id] = $content;
             }
         }
